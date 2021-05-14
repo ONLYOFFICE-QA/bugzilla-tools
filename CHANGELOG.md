@@ -5,6 +5,7 @@
 ### New Features
 
 * Add `shellcheck` linter in CI
+* Add `markdownlint` to CI
 
 ### Fixes
 
