@@ -9,7 +9,7 @@ BACKUP_NAME=bugzilla-backup-$DATE.tar.gz
 BACKUP_DIR=/mnt/bugzilla_data_volume/bugzilla-backup-temp
 
 mkdir -pv $BACKUP_DIR
-mysqldump --max-allowed-packet=32M -u $DB_USER -p$DB_PASS $DB_BASE > $BACKUP_DIR/bugzilla.sql
+mysqldump --no-tablespaces --max-allowed-packet=32M -u $DB_USER -p$DB_PASS $DB_BASE > $BACKUP_DIR/bugzilla.sql
 cp -rp /var/www/html/bugzilla $BACKUP_DIR/data
 tar -zcvf "$BACKUP_NAME" $BACKUP_DIR
 /usr/local/bin/aws s3 cp "$BACKUP_NAME" s3://nct-bugzilla-backup/
