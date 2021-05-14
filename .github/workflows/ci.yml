@@ -1,0 +1,9 @@
+name: check
+on: [push]
+jobs:
+  shell-linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run linter for shell files
+        run: shellcheck *.sh
