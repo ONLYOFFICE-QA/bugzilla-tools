@@ -3,7 +3,7 @@
 AWS_ACCESS_KEY_ID=''
 AWS_SECRET_ACCESS_KEY=''
 BACKUP_NAME='bugzilla-backup-2021-05-26-16-00-01.tar.gz'
-BUGZILLA_DB_USER='bugz'
+BUGZILLA_DB_USER=''
 BUGZILLA_DB_PASSWORD=''
 TEMP_FOLDER='/tmp'
 
@@ -25,18 +25,25 @@ a2enmod headers
 a2enmod rewrite
 service apache2 restart
 
-aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
-aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
-aws s3 cp s3://nct-bugzilla-backup/$BACKUP_NAME $TEMP_FOLDER
+if compgen -G "/tmp/bugzilla-backup-*.tar.gz" > /dev/null; then
+  echo "bugzilla backup file already downloaded"
+else
+  aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
+  aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
+  aws s3 cp s3://nct-bugzilla-backup/$BACKUP_NAME $TEMP_FOLDER
+fi
+
 
 # Unpack backup
 tar xvf $TEMP_FOLDER/$BACKUP_NAME -C $TEMP_FOLDER
 mkdir -pv /var/www/html/bugzilla
-mv $TEMP_FOLDER/mnt/bugzilla_data_volume/bugzilla-backup-temp/data /var/www/html/bugzillac
+mv $TEMP_FOLDER/mnt/bugzilla_data_volume/bugzilla-backup-temp/data /var/www/html/
+mv /var/www/html/data /var/www/html/bugzilla
 
 # Install perl dependencies
 cd /var/www/html/bugzilla
 /usr/bin/perl install-module.pl --all
+/usr/bin/perl install-module.pl Email::Send::SMTP::TLS
 
 # Restore database
 service mysql start
