@@ -37,7 +37,6 @@ fi
 
 # Unpack backup
 tar xvf $TEMP_FOLDER/$BACKUP_NAME -C $TEMP_FOLDER
-mkdir -pv /var/www/html/bugzilla
 mv $TEMP_FOLDER/mnt/bugzilla_data_volume/bugzilla-backup-temp/data /var/www/html/
 mv /var/www/html/data /var/www/html/bugzilla
 
@@ -52,5 +51,6 @@ pv $TEMP_FOLDER/mnt/bugzilla_data_volume/bugzilla-backup-temp/bugzilla.sql | mys
 cd /var/www/html/bugzilla
 /usr/bin/perl install-module.pl --all
 /usr/bin/perl install-module.pl Email::Send::SMTP::TLS
+(echo y;echo o conf prerequisites_policy follow;echo o conf commit)|cpan -i Class::XSAccessor::Array Class::XSAccessor
 
 service apache2 restart
