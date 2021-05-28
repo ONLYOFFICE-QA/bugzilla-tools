@@ -12,5 +12,5 @@ task :check_restore do
   sh("docker build . --tag #{image_name}")
   sh("docker run --name #{image_name} -itd -p 80:80 #{image_name} bash")
   sh("docker cp #{local_backup_pattern} #{image_name}:/tmp") unless Dir.glob(local_backup_pattern).empty?
-  sh("docker exec -it #{image_name} bash /root/restore-backup.sh")
+  sh("docker exec -it #{image_name} bash /root/bugzilla-tools/restore-backup.sh")
 end
