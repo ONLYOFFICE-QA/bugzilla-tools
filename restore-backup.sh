@@ -48,9 +48,11 @@ mysql -u root -e "GRANT ALL ON $BUGZILLA_DB_NAME.* TO '$BUGZILLA_DB_USER'@'local
 pv $TEMP_FOLDER/mnt/bugzilla_data_volume/bugzilla-backup-temp/bugzilla.sql | mysql -u "$BUGZILLA_DB_USER" -p"$BUGZILLA_DB_PASSWORD" "$BUGZILLA_DB_NAME"
 
 # Install perl dependencies
-cd /var/www/html/bugzilla
+cd /var/www/html/bugzilla || exit
 /usr/bin/perl install-module.pl --all
 /usr/bin/perl install-module.pl Email::Send::SMTP::TLS
 (echo y;echo o conf prerequisites_policy follow;echo o conf commit)|cpan -i Class::XSAccessor::Array Class::XSAccessor
 
+# Add apache2 config
+cp /root/bugzilla-tools/bugzilla-tools/apache2/bugzilla.conf /etc/apache2/sites-enabled/
 service apache2 restart
