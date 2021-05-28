@@ -54,5 +54,5 @@ cd /var/www/html/bugzilla || exit
 (echo y;echo o conf prerequisites_policy follow;echo o conf commit)|cpan -i Class::XSAccessor::Array Class::XSAccessor
 
 # Add apache2 config
-cp /root/bugzilla-tools/bugzilla-tools/apache2/bugzilla.conf /etc/apache2/sites-enabled/
+cp /root/bugzilla-tools/apache2/bugzilla.conf /etc/apache2/sites-enabled/
 service apache2 restart
