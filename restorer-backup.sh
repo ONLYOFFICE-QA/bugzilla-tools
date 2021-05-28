@@ -33,22 +33,21 @@ else
   aws s3 cp s3://nct-bugzilla-backup/$BACKUP_NAME $TEMP_FOLDER
 fi
 
-
 # Unpack backup
 tar xvf $TEMP_FOLDER/$BACKUP_NAME -C $TEMP_FOLDER
 mkdir -pv /var/www/html/bugzilla
 mv $TEMP_FOLDER/mnt/bugzilla_data_volume/bugzilla-backup-temp/data /var/www/html/
 mv /var/www/html/data /var/www/html/bugzilla
 
-# Install perl dependencies
-cd /var/www/html/bugzilla
-/usr/bin/perl install-module.pl --all
-/usr/bin/perl install-module.pl Email::Send::SMTP::TLS
-
 # Restore database
 service mysql start
 mysql -u root -e "CREATE USER '$BUGZILLA_DB_USER'@'localhost' IDENTIFIED BY '$BUGZILLA_DB_PASSWORD';"
 mysql -u root -e "GRANT ALL ON $BUGZILLA_DB_USER.* TO '$BUGZILLA_DB_USER'@'localhost';"
-pv $TEMP_FOLDER/var/backups/bugzilla/bugz.sql.gz | gunzip | mysql -u "$BUGZILLA_DB_USER" -p"$BUGZILLA_DB_PASSWORD" testrail
+pv $TEMP_FOLDER/var/backups/bugzilla/bugz.sql.gz | gunzip | mysql -u "$BUGZILLA_DB_USER" -p"$BUGZILLA_DB_PASSWORD" bugz
+
+# Install perl dependencies
+cd /var/www/html/bugzilla
+/usr/bin/perl install-module.pl --all
+/usr/bin/perl install-module.pl Email::Send::SMTP::TLS
 
 service apache2 restart
