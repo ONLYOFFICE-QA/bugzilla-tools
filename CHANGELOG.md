@@ -6,6 +6,7 @@
 
 * Add `shellcheck` linter in CI
 * Add `markdownlint` to CI
+* Add script to restore bugzilla backup
 
 ### Fixes
 
