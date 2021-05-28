@@ -3,8 +3,9 @@
 AWS_ACCESS_KEY_ID=''
 AWS_SECRET_ACCESS_KEY=''
 BACKUP_NAME='bugzilla-backup-2021-05-26-16-00-01.tar.gz'
-BUGZILLA_DB_USER=''
+BUGZILLA_DB_USER='bugs'
 BUGZILLA_DB_PASSWORD=''
+BUGZILLA_DB_NAME='bugz'
 TEMP_FOLDER='/tmp'
 
 apt-get -y update
@@ -17,7 +18,8 @@ apt-get -y install apache2 \
                    libmysqlclient-dev \
                    make \
                    mysql-server \
-                   pkg-config
+                   pkg-config \
+                   pv
 
 a2enmod cgi
 a2enmod expires
@@ -41,9 +43,10 @@ mv /var/www/html/data /var/www/html/bugzilla
 
 # Restore database
 service mysql start
+mysql -u root -e "CREATE DATABASE $BUGZILLA_DB_USER DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;"
 mysql -u root -e "CREATE USER '$BUGZILLA_DB_USER'@'localhost' IDENTIFIED BY '$BUGZILLA_DB_PASSWORD';"
-mysql -u root -e "GRANT ALL ON $BUGZILLA_DB_USER.* TO '$BUGZILLA_DB_USER'@'localhost';"
-pv $TEMP_FOLDER/var/backups/bugzilla/bugz.sql.gz | gunzip | mysql -u "$BUGZILLA_DB_USER" -p"$BUGZILLA_DB_PASSWORD" bugz
+mysql -u root -e "GRANT ALL ON $BUGZILLA_DB_NAME.* TO '$BUGZILLA_DB_USER'@'localhost';"
+pv $TEMP_FOLDER/mnt/bugzilla_data_volume/bugzilla-backup-temp/bugzilla.sql | mysql -u "$BUGZILLA_DB_USER" -p"$BUGZILLA_DB_PASSWORD" "$BUGZILLA_DB_NAME"
 
 # Install perl dependencies
 cd /var/www/html/bugzilla
