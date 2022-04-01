@@ -37,7 +37,7 @@ fi
 
 # Unpack backup
 tar xvf $TEMP_FOLDER/$BACKUP_NAME -C $TEMP_FOLDER
-mv $TEMP_FOLDER/mnt/bugzilla_data_volume/bugzilla-backup-temp/data /var/www/html/
+mv $TEMP_FOLDER/mnt/bugzilla_data_volume/bugzilla-backup-storage/bugzilla-backup-temp/data /var/www/html/
 mv /var/www/html/data /var/www/html/bugzilla
 
 # Restore database
@@ -45,7 +45,7 @@ service mysql start
 mysql -u root -e "CREATE DATABASE $BUGZILLA_DB_NAME DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;"
 mysql -u root -e "CREATE USER '$BUGZILLA_DB_USER'@'localhost' IDENTIFIED BY '$BUGZILLA_DB_PASSWORD';"
 mysql -u root -e "GRANT ALL ON $BUGZILLA_DB_NAME.* TO '$BUGZILLA_DB_USER'@'localhost';"
-pv $TEMP_FOLDER/mnt/bugzilla_data_volume/bugzilla-backup-temp/bugzilla.sql | mysql -u "$BUGZILLA_DB_USER" -p"$BUGZILLA_DB_PASSWORD" "$BUGZILLA_DB_NAME"
+pv $TEMP_FOLDER/mnt/bugzilla_data_volume/bugzilla-backup-storage/bugzilla-backup-temp/bugzilla.sql | mysql -u "$BUGZILLA_DB_USER" -p"$BUGZILLA_DB_PASSWORD" "$BUGZILLA_DB_NAME"
 
 # Install perl dependencies
 cd /var/www/html/bugzilla || exit
